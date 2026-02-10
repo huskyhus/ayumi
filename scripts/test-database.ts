@@ -12,8 +12,9 @@ async function testDatabase() {
     console.log("\n📝 テストユーザーを作成中...");
     const newUser = await prisma.user.create({
       data: {
-        email: `test-${Date.now()}@example.com`,
+        id: "d5794b1b-5f92-4dc6-aa48-085dba08b813",
         name: "Test User",
+        language: "JP",
       },
     });
     console.log("✅ ユーザー作成成功:", newUser);

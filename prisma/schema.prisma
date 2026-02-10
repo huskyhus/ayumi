@@ -14,17 +14,46 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
+  id        String   @id @default(uuid())
+  name      String
+  language  Language
+  createdAt DateTime @default(now())
+
+  habits Habit[]
 }
 
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User    @relation(fields: [authorId], references: [id])
-  authorId  Int
+model Habit {
+  id        String    @id @default(uuid())
+  userId    String
+  name      String
+  type      HabitType
+  config    Json
+  createdAt DateTime  @default(now())
+
+  user   User         @relation(fields: [userId], references: [id])
+  events HabitEvent[]
+
+  @@index([userId])
+}
+
+model HabitEvent {
+  id         String   @id @default(uuid())
+  habitId    String
+  value      Json
+  occurredAt DateTime
+  createdAt  DateTime @default(now())
+
+  habit Habit @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  @@index([habitId, occurredAt])
+}
+
+enum HabitType {
+  DO
+  AVOID
+}
+
+enum Language {
+  EN
+  JP
 }

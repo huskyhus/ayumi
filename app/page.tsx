@@ -24,10 +24,7 @@ export default async function HomePage() {
             <tr style={{ backgroundColor: "#f4f4f4", textAlign: "left" }}>
               <th style={{ padding: "12px", border: "1px solid #ddd" }}>ID</th>
               <th style={{ padding: "12px", border: "1px solid #ddd" }}>
-                Name
-              </th>
-              <th style={{ padding: "12px", border: "1px solid #ddd" }}>
-                Email
+                Created At
               </th>
             </tr>
           </thead>
@@ -38,10 +35,7 @@ export default async function HomePage() {
                   {user.id}
                 </td>
                 <td style={{ padding: "12px", border: "1px solid #ddd" }}>
-                  {user.name || "N/A"}
-                </td>
-                <td style={{ padding: "12px", border: "1px solid #ddd" }}>
-                  {user.email}
+                  {user.createdAt ? user.createdAt.getFullYear() : "N/A"}
                 </td>
               </tr>
             ))}
