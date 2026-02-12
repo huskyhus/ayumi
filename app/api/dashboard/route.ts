@@ -1,18 +1,27 @@
+import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { HARDCODED_USER_ID } from "@/lib/constants";
 import { HabitConfigSchema } from "@/lib/domain/habit/habitConfig";
 import { calculateHabitStats, type HabitStats } from "@/lib/domain/habit/evaluate";
-import DashboardClient from "@/components/DashboardClient";
-import type { DashboardHabitData } from "@/components/HabitCard";
+import { HARDCODED_USER_ID } from "@/lib/constants";
 
-export default async function DashboardPage() {
+export type DashboardHabit = {
+  id: string;
+  name: string;
+  type: string;
+  config: unknown;
+  createdAt: string;
+  configError: boolean;
+  stats: HabitStats | null;
+};
+
+export async function GET() {
   const habits = await prisma.habit.findMany({
     where: { userId: HARDCODED_USER_ID },
     include: { events: { orderBy: { occurredAt: "asc" } } },
     orderBy: { createdAt: "asc" },
   });
 
-  const dashboardHabits: DashboardHabitData[] = habits.map((habit) => {
+  const result: DashboardHabit[] = habits.map((habit) => {
     const configParsed = HabitConfigSchema.safeParse(habit.config);
 
     let stats: HabitStats | null = null;
@@ -35,10 +44,5 @@ export default async function DashboardPage() {
     };
   });
 
-  return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">Ayumi</h1>
-      <DashboardClient initialHabits={dashboardHabits} />
-    </div>
-  );
+  return NextResponse.json(result);
 }
