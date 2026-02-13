@@ -8,24 +8,24 @@ import {
 } from "@/components/ui/tooltip";
 
 export default function StreakBadge({
-  current,
-  longest,
+  currentDays,
+  longestDays,
 }: {
-  current: number;
-  longest: number;
+  currentDays: number;
+  longestDays: number;
 }) {
-  if (current === 0 && longest === 0) return null;
+  if (currentDays === 0 && longestDays === 0) return null;
 
   return (
     <Tooltip>
       <TooltipTrigger asChild>
         <Badge variant="secondary" className="text-xs gap-1">
-          {current > 0 ? `${current} 連続` : "0 連続"}
+          {currentDays > 0 ? `${currentDays}日連続` : "0日連続"}
         </Badge>
       </TooltipTrigger>
       <TooltipContent>
-        <p>現在のストリーク: {current}</p>
-        <p>最長ストリーク: {longest}</p>
+        <p>現在のストリーク: {currentDays}日</p>
+        <p>最長ストリーク: {longestDays}日</p>
       </TooltipContent>
     </Tooltip>
   );

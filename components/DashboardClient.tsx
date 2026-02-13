@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import HabitCard, { type DashboardHabitData } from "./HabitCard";
 import AddHabitForm from "./AddHabitForm";
+import ThemeToggle from "./ThemeToggle";
 
 type Props = {
   initialHabits: DashboardHabitData[];
@@ -26,7 +27,7 @@ export default function DashboardClient({ initialHabits }: Props) {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <div />
+        <ThemeToggle />
         <AddHabitForm onHabitCreated={refresh} />
       </div>
 

@@ -36,8 +36,8 @@ export type DoHabitStats = {
   type: "DO";
   currentPeriod: DoHabitPeriodResult;
   achievementRate: number;
-  currentStreak: number;
-  longestStreak: number;
+  currentStreakDays: number;
+  longestStreakDays: number;
   periodHistory: DoHabitPeriodResult[];
 };
 
@@ -45,8 +45,8 @@ export type AvoidHabitStats = {
   type: "AVOID";
   currentPeriod: AvoidHabitPeriodResult;
   achievementRate: number;
-  currentStreak: number;
-  longestStreak: number;
+  currentStreakDays: number;
+  longestStreakDays: number;
   daysSinceLastOccurrence: number | null;
   periodHistory: AvoidHabitPeriodResult[];
 };
@@ -61,34 +61,63 @@ function eventsInPeriod(events: HabitEvent[], period: Period): HabitEvent[] {
   );
 }
 
-function computeStreaks(periodResults: PeriodResult[]): {
-  currentStreak: number;
-  longestStreak: number;
+function daysBetween(start: Date, end: Date): number {
+  return Math.max(
+    0,
+    Math.floor((end.getTime() - start.getTime()) / 86400000) + 1
+  );
+}
+
+function computeStreakDays(periodResults: PeriodResult[]): {
+  currentStreakDays: number;
+  longestStreakDays: number;
 } {
-  let currentStreak = 0;
-  let longestStreak = 0;
-  let streak = 0;
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+
+  // Build runs of consecutive achieved periods
+  const runs: PeriodResult[][] = [];
+  let currentRun: PeriodResult[] = [];
 
   for (const result of periodResults) {
     if (result.achieved) {
-      streak++;
-      if (streak > longestStreak) longestStreak = streak;
+      currentRun.push(result);
     } else {
-      streak = 0;
+      if (currentRun.length > 0) {
+        runs.push(currentRun);
+        currentRun = [];
+      }
+    }
+  }
+  if (currentRun.length > 0) {
+    runs.push(currentRun);
+  }
+
+  function runDays(run: PeriodResult[]): number {
+    let total = 0;
+    for (const r of run) {
+      const isCurrentPeriod = today >= r.period.start && today <= r.period.end;
+      const end = isCurrentPeriod ? today : r.period.end;
+      total += daysBetween(r.period.start, end);
+    }
+    return total;
+  }
+
+  const longestStreakDays =
+    runs.length > 0 ? Math.max(...runs.map(runDays)) : 0;
+
+  // Current streak: the last run, only if it includes the most recent period
+  let currentStreakDays = 0;
+  if (runs.length > 0) {
+    const lastRun = runs[runs.length - 1];
+    const lastPeriod = lastRun[lastRun.length - 1].period;
+    const lastInResults = periodResults[periodResults.length - 1].period;
+    if (lastPeriod.key === lastInResults.key) {
+      currentStreakDays = runDays(lastRun);
     }
   }
 
-  // Current streak: count backward from the last period
-  currentStreak = 0;
-  for (let i = periodResults.length - 1; i >= 0; i--) {
-    if (periodResults[i].achieved) {
-      currentStreak++;
-    } else {
-      break;
-    }
-  }
-
-  return { currentStreak, longestStreak };
+  return { currentStreakDays, longestStreakDays };
 }
 
 // ─── Do Habit ────────────────────────────────────────────────────────
@@ -136,7 +165,8 @@ export function calculateDoHabitStats(
   const achievementRate =
     completedPeriods.length > 0 ? achievedCount / completedPeriods.length : 0;
 
-  const { currentStreak, longestStreak } = computeStreaks(periodHistory);
+  const { currentStreakDays, longestStreakDays } =
+    computeStreakDays(periodHistory);
 
   const currentPeriod =
     periodHistory.find((p) => p.period.key === current.key) ??
@@ -146,8 +176,8 @@ export function calculateDoHabitStats(
     type: "DO",
     currentPeriod,
     achievementRate,
-    currentStreak,
-    longestStreak,
+    currentStreakDays,
+    longestStreakDays,
     periodHistory,
   };
 }
@@ -190,7 +220,8 @@ export function calculateAvoidHabitStats(
   const achievementRate =
     completedPeriods.length > 0 ? achievedCount / completedPeriods.length : 0;
 
-  const { currentStreak, longestStreak } = computeStreaks(periodHistory);
+  const { currentStreakDays, longestStreakDays } =
+    computeStreakDays(periodHistory);
 
   // Days since last occurrence
   let daysSinceLastOccurrence: number | null = null;
@@ -212,8 +243,8 @@ export function calculateAvoidHabitStats(
     type: "AVOID",
     currentPeriod,
     achievementRate,
-    currentStreak,
-    longestStreak,
+    currentStreakDays,
+    longestStreakDays,
     daysSinceLastOccurrence,
     periodHistory,
   };

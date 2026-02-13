@@ -7,6 +7,10 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-habit-do: var(--habit-do);
+  --color-habit-do-muted: var(--habit-do-muted);
+  --color-habit-avoid: var(--habit-avoid);
+  --color-habit-avoid-muted: var(--habit-avoid-muted);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -49,6 +53,10 @@
 
 :root {
   --radius: 0.625rem;
+  --habit-do: oklch(0.65 0.18 250);
+  --habit-do-muted: oklch(0.65 0.18 250 / 15%);
+  --habit-avoid: oklch(0.75 0.15 75);
+  --habit-avoid-muted: oklch(0.75 0.15 75 / 15%);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -83,6 +91,10 @@
 }
 
 .dark {
+  --habit-do: oklch(0.72 0.16 250);
+  --habit-do-muted: oklch(0.72 0.16 250 / 15%);
+  --habit-avoid: oklch(0.78 0.13 75);
+  --habit-avoid-muted: oklch(0.78 0.13 75 / 15%);
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);

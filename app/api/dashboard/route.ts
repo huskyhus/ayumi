@@ -12,12 +12,13 @@ export type DashboardHabit = {
   createdAt: string;
   configError: boolean;
   stats: HabitStats | null;
+  events: { id: string; value: unknown; occurredAt: string }[];
 };
 
 export async function GET() {
   const habits = await prisma.habit.findMany({
     where: { userId: HARDCODED_USER_ID },
-    include: { events: { orderBy: { occurredAt: "asc" } } },
+    include: { events: { orderBy: { occurredAt: "desc" } } },
     orderBy: { createdAt: "asc" },
   });
 
@@ -26,10 +27,13 @@ export async function GET() {
 
     let stats: HabitStats | null = null;
     if (configParsed.success) {
-      const events = habit.events.map((e) => ({
-        occurredAt: e.occurredAt,
-        value: e.value as Record<string, unknown>,
-      }));
+      const events = habit.events
+        .slice()
+        .sort((a, b) => a.occurredAt.getTime() - b.occurredAt.getTime())
+        .map((e) => ({
+          occurredAt: e.occurredAt,
+          value: e.value as Record<string, unknown>,
+        }));
       stats = calculateHabitStats(configParsed.data, events, habit.createdAt);
     }
 
@@ -41,8 +45,18 @@ export async function GET() {
       createdAt: habit.createdAt.toISOString(),
       configError: !configParsed.success,
       stats,
+      events: habit.events.slice(0, 5).map((e) => ({
+        id: e.id,
+        value: e.value as Record<string, unknown>,
+        occurredAt: e.occurredAt.toISOString(),
+      })),
     };
   });
+
+  const typeOrder: Record<string, number> = { DO: 0, AVOID: 1 };
+  result.sort(
+    (a, b) => (typeOrder[a.type] ?? 2) - (typeOrder[b.type] ?? 2)
+  );
 
   return NextResponse.json(result);
 }

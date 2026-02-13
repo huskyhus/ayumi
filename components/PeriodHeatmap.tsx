@@ -9,11 +9,15 @@ import type { PeriodResult } from "@/lib/domain/habit/evaluate";
 
 export default function PeriodHeatmap({
   periods,
+  habitType,
 }: {
   periods: PeriodResult[];
+  habitType?: string;
 }) {
   // Show at most 12 recent periods
   const visible = periods.slice(-12);
+  const achievedColor =
+    habitType === "AVOID" ? "bg-habit-avoid" : "bg-habit-do";
 
   return (
     <div className="flex gap-1 flex-wrap">
@@ -22,9 +26,7 @@ export default function PeriodHeatmap({
           <TooltipTrigger asChild>
             <div
               className={`h-4 w-4 rounded-sm ${
-                p.achieved
-                  ? "bg-emerald-400"
-                  : "bg-muted"
+                p.achieved ? achievedColor : "bg-muted"
               }`}
             />
           </TooltipTrigger>

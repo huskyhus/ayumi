@@ -11,7 +11,7 @@ export default function AvoidHabitStatus({ stats }: { stats: AvoidHabitStats }) 
       <div className="flex items-center gap-2 text-sm">
         <span
           className={`inline-block h-2.5 w-2.5 rounded-full ${
-            clean ? "bg-emerald-500" : "bg-muted-foreground"
+            clean ? "bg-habit-avoid" : "bg-muted-foreground"
           }`}
         />
         <span className="text-muted-foreground">

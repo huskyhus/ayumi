@@ -23,7 +23,10 @@ export default function DoHabitProgress({
           {result.count}/{result.target} 回
         </span>
       </div>
-      <Progress value={percentage} className="h-2" />
+      <Progress
+        value={percentage}
+        className="h-2 [&>[data-slot=progress-indicator]]:bg-habit-do"
+      />
     </div>
   );
 }
