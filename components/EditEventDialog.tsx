@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Pencil } from "lucide-react";
-import type { DashboardHabitEvent } from "./HabitCard";
+import type { DashboardHabitEvent } from "@/lib/domain/habit/dashboard";
 
 type Props = {
   event: DashboardHabitEvent;

@@ -10,28 +10,8 @@ import PeriodHeatmap from "./PeriodHeatmap";
 import StreakBadge from "./StreakBadge";
 import AddEventDialog from "./AddEventDialog";
 import EditEventDialog from "./EditEventDialog";
-import type {
-  HabitStats,
-  DoHabitStats,
-  AvoidHabitStats,
-} from "@/lib/domain/habit/evaluate";
-
-export type DashboardHabitEvent = {
-  id: string;
-  value: Record<string, unknown>;
-  occurredAt: string;
-};
-
-export type DashboardHabitData = {
-  id: string;
-  name: string;
-  type: string;
-  config: unknown;
-  createdAt: string;
-  configError: boolean;
-  stats: HabitStats | null;
-  events?: DashboardHabitEvent[];
-};
+import type { DoHabitStats, AvoidHabitStats } from "@/lib/domain/habit/evaluate";
+import type { DashboardHabitData } from "@/lib/domain/habit/dashboard";
 
 type Props = {
   habit: DashboardHabitData;

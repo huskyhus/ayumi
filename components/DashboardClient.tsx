@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import HabitCard, { type DashboardHabitData } from "./HabitCard";
+import HabitCard from "./HabitCard";
+import type { DashboardHabitData } from "@/lib/domain/habit/dashboard";
 import AddHabitForm from "./AddHabitForm";
 import ThemeToggle from "./ThemeToggle";
 
